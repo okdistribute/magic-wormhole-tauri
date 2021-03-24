@@ -1,7 +1,7 @@
 ## no identity
 
 This is an experimental project for designing trusted collaborative
-applications that are resilient to phishing attacks.
+applications that are resistant to phishing attacks.
 
 ### Development
 
