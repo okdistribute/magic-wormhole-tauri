@@ -8,3 +8,7 @@ WixTools
 
 config.json
 bundle.json
+
+# For now we dont include this lockfile
+# while we are in rapid prototyping phase
+Cargo.lock
