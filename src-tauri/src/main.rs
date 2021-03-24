@@ -5,11 +5,16 @@
 use clipboard::ClipboardProvider;
 use clipboard::ClipboardContext;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use futures::executor::block_on;
+use hex;
+
+mod dana;
 mod cmd;
 
 #[derive(Serialize)]
-struct Response<'a> {
-  code: &'a str,
+struct Response {
+  message: String
 }
 
 // An error type we define
@@ -40,22 +45,34 @@ fn main() {
     .invoke_handler(|_webview, arg| {
       use cmd::Cmd::*;
       match serde_json::from_str(arg) {
-        Err(e) => {
-          Err(e.to_string())
-        }
+        Err(e) => Err(e.to_string()),
         Ok(command) => {
           match command {
-            Generate { filename, callback, error } => tauri::execute_promise(
+            GenerateCode { filename, callback, error } => tauri::execute_promise(
               _webview,
               move || {
-                let code = "secret-code-time";
-                let response = Response {
-                  code: code 
-                };
-                
+                let code = block_on(dana::Code::new(None));
+                let s = code.welcome.code.0.clone();
                 let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                ctx.set_contents(code.to_owned()).unwrap();
-                Ok(response)
+                ctx.set_contents(code.welcome.code.0.clone()).unwrap();
+                println!("code {}", s);
+                let hole= block_on(code.connect());
+                Ok(Response {
+                  message: s
+                })
+              },
+              callback,
+              error,
+            ),
+            RedeemCode { code, callback, error } => tauri::execute_promise(
+              _webview, 
+              move || {
+                let code = block_on(dana::Code::new(Some(code)));
+                let hole = block_on(code.connect());
+
+                Ok(Response {
+                  message: hex::encode(hole.key.0)
+                })
               },
               callback,
               error,
@@ -63,8 +80,8 @@ fn main() {
           }
           Ok(())
         }
-    }
-  })
+      }
+    })
   .build()
   .run();
 }

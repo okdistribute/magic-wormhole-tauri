@@ -4,11 +4,11 @@ import { promisified } from 'tauri/api/tauri';
 export type Code = string;
 
 export enum ActionTopic {
-  // Reserved for app-level catastrophic errors
+  // TODO: create these programmatically from cmd.rs
   ERROR = 'error', 
   CODE = 'code',
-  GENERATE = 'generate',
-  REDEEM = 'redeem'
+  GENERATE = 'generateCode',
+  REDEEM = 'redeemCode'
 }
 
 export type Action = {
@@ -16,8 +16,8 @@ export type Action = {
   data?: Object 
 }
 
-type GenerateResponse = {
-  code: Code
+type Response = {
+  message: string
 }
 
 export class RPC extends EventEmitter {
@@ -26,13 +26,24 @@ export class RPC extends EventEmitter {
     // TODO: catch errors
   }
 
-  generateCode (): Promise<Code> {
+  generateCode (filename: string): Promise<Code> {
     return new Promise((resolve, reject) => {
-      promisified({ cmd: ActionTopic.GENERATE, filename: "notafile"})
-        .then((params: GenerateResponse) => {
+      promisified({ cmd: ActionTopic.GENERATE, filename})
+        .then((params: Response) => {
           // TODO: verify this is a valid code
-          console.log("got response from backend", params)
-          resolve(params.code)
+          console.log("got response from backend", JSON.stringify(params))
+          resolve(params.message)
+        })
+        .catch(reject)
+    })
+  }
+
+  redeemCode (code: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      promisified({ cmd: ActionTopic.REDEEM, code })
+        .then((params: Response) => {
+          console.log("got response from backend", JSON.stringify(params))
+          resolve(params.message)
         })
         .catch(reject)
     })

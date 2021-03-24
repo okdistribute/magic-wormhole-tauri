@@ -6,10 +6,16 @@ pub enum Cmd {
   // your custom commands
   // multiple arguments are allowed
   // note that rename_all = "camelCase": you need to use "myCustomCommand" on JS
-  Generate { 
+  GenerateCode { 
     filename: String,
     callback: String,
-    error: String,
+    error: String
   },
+
+  RedeemCode {
+    code: String,
+    callback: String,
+    error: String
+  }
 
 }
