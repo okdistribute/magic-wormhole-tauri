@@ -72,8 +72,8 @@ mod tests {
 
         let peer_b: Peer = redeem_code(share_out_of_band).await.unwrap();
         
-        let hole1 = connect(peer_a).await.unwrap();
-        let hole2 = connect(peer_b).await.unwrap();
+        let hole1 = peer_a.connector.connect_to_client().await.unwrap();
+        let hole2 = peer_b.connector.connect_to_client().await.unwrap();
 
         assert_eq!(&hole1.key.0, &hole2.key.0);
         Ok(())
