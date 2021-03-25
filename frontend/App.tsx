@@ -42,6 +42,8 @@ const CodeView = () => {
 
     window.remote.generateCode(filename)
       .then((message: string) => {
+        console.log('got', message)
+        setKey(message)
       })
       .catch((err: Error) => {
         setGenerated(false);

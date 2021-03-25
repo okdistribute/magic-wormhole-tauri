@@ -2,19 +2,19 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
-use clipboard::ClipboardProvider;
 use clipboard::ClipboardContext;
-use serde::{Deserialize, Serialize};
-use serde_json::json;
+use clipboard::ClipboardProvider;
 use futures::executor::block_on;
 use hex;
+use serde::Serialize;
 
-mod dana;
 mod cmd;
+mod dana;
+mod errors;
 
 #[derive(Serialize)]
 struct Response {
-  message: String
+  message: String,
 }
 
 // An error type we define
@@ -41,7 +41,6 @@ impl<'a> std::fmt::Display for CommandError<'a> {
 impl<'a> std::error::Error for CommandError<'a> {}
 
 fn main() {
-
   tauri::AppBuilder::new()
     .invoke_handler(|_webview, arg| {
       use cmd::Cmd::*;
@@ -49,7 +48,11 @@ fn main() {
         Err(e) => Err(e.to_string()),
         Ok(command) => {
           match command {
-            GenerateCode { filename, callback, error } => tauri::execute_promise(
+            GenerateCode {
+              filename,
+              callback,
+              error,
+            } => tauri::execute_promise(
               _webview,
               move || {
                 let peer = block_on(dana::create_code()).unwrap();
@@ -57,23 +60,28 @@ fn main() {
                 let code = peer.code;
                 println!("code {}", &code);
                 ctx.set_contents(code.clone()).unwrap();
-                let wormhole = block_on(peer.connector.connect_to_client());
+                let hole = block_on(peer.connector.connect_to_client()).unwrap();
+                let crypto_key = hex::encode(hole.key.0);
                 Ok(Response {
-                  message: code
+                  message: crypto_key,
                 })
               },
               callback,
               error,
             ),
-            RedeemCode { code, callback, error } => tauri::execute_promise(
-              _webview, 
+            RedeemCode {
+              code,
+              callback,
+              error,
+            } => tauri::execute_promise(
+              _webview,
               move || {
                 let peer = block_on(dana::redeem_code(code)).unwrap();
                 let hole = block_on(peer.connector.connect_to_client()).unwrap();
                 let crypto_key = hex::encode(hole.key.0);
 
                 Ok(Response {
-                  message: crypto_key
+                  message: crypto_key,
                 })
               },
               callback,
@@ -84,6 +92,6 @@ fn main() {
         }
       }
     })
-  .build()
-  .run();
+    .build()
+    .run();
 }
