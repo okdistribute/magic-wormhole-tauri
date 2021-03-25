@@ -14,6 +14,7 @@ serde_json = "1.0"
 clipboard = "0.5.0"
 hex = "0.4.3"
 log = "0.4.13"
+anyhow = "1.0"
 magic-wormhole = { git = "https://github.com/magic-wormhole/magic-wormhole.rs" }
 async-std = { version = "1.9.0", features = [ "attributes" ] }
 async-tungstenite = { version = "0.13.1", features = [ "async-std-runtime" ] }

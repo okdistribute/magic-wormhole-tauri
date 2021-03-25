@@ -41,6 +41,7 @@ impl<'a> std::fmt::Display for CommandError<'a> {
 impl<'a> std::error::Error for CommandError<'a> {}
 
 fn main() {
+
   tauri::AppBuilder::new()
     .invoke_handler(|_webview, arg| {
       use cmd::Cmd::*;
@@ -51,14 +52,14 @@ fn main() {
             GenerateCode { filename, callback, error } => tauri::execute_promise(
               _webview,
               move || {
-                let code = block_on(dana::Code::new(None));
-                let s = code.welcome.code.0.clone();
+                let peer = block_on(dana::create_code()).unwrap();
                 let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                ctx.set_contents(code.welcome.code.0.clone()).unwrap();
-                println!("code {}", s);
-                let hole= block_on(code.connect());
+                let code = peer.code;
+                println!("code {}", &code);
+                ctx.set_contents(code.clone()).unwrap();
+                let wormhole = block_on(peer.connector.connect_to_client());
                 Ok(Response {
-                  message: s
+                  message: code
                 })
               },
               callback,
@@ -67,11 +68,12 @@ fn main() {
             RedeemCode { code, callback, error } => tauri::execute_promise(
               _webview, 
               move || {
-                let code = block_on(dana::Code::new(Some(code)));
-                let hole = block_on(code.connect());
+                let peer = block_on(dana::redeem_code(code)).unwrap();
+                let hole = block_on(peer.connector.connect_to_client()).unwrap();
+                let crypto_key = hex::encode(hole.key.0);
 
                 Ok(Response {
-                  message: hex::encode(hole.key.0)
+                  message: crypto_key
                 })
               },
               callback,

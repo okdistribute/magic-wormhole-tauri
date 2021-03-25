@@ -6,15 +6,15 @@ let USER_FEEDBACK_TIMER = 5000;
 
 const CodeView = () => {
   let [ code , setCode ] = useState("");
-  let [ disabled , setDisabled ] = useState(false);
+  let [ key, setKey ] = useState("");
+  let [ generated , setGenerated ] = useState(false);
 
   let onError = (err: Error) => {
     console.error('got error from backend', err)
   }
 
   function handleChange (event) {
-    console.log('got event', event)
-    console.log('set code', event.target.value)
+    console.log(event.target.value)
     setCode(event.target.value)
   }
 
@@ -22,6 +22,7 @@ const CodeView = () => {
     window.remote.redeemCode(code)
       .then((message: string) => {
         console.log('got', message)
+        setKey(message)
       })
       .catch((err: Error) => {
         onError(err)
@@ -30,40 +31,42 @@ const CodeView = () => {
 
   function onClickGenerate () {
     // When a new code is generated
-    setDisabled(true);
+    // no news is good news.
+    setGenerated(true);
     let filename = 'fakefilename.txt'
+
+    // Reset the state after a certain amount of time
+    setTimeout(() => {
+      setGenerated(false);
+    }, USER_FEEDBACK_TIMER);
+
     window.remote.generateCode(filename)
-      .then((message: Code) => {
-
-        // Write the code to the clipboard and notify the user
-        setCode(code);
-
-        // Reset the state after a certain amount of time
-        setTimeout(() => {
-          setCode("");
-          setDisabled(false);
-        }, USER_FEEDBACK_TIMER);
+      .then((message: string) => {
       })
       .catch((err: Error) => {
+        setGenerated(false);
         onError(err)
       })
   }
 
   return (
     <div>
-      <h1>DANA</h1>
+      <h1>MAGIC WORMHOLE</h1>
       <div className="Hello">
-        <button disabled={disabled} onClick={onClickGenerate}>
+        <button disabled={generated} onClick={onClickGenerate}>
             Generate
         </button>
 
-        <input type="text" value={code} onChange={handleChange}></input>
+        <input type="text" onChange={handleChange}></input>
         <button onClick={onClickRedeem}>
            Redeem 
         </button>
       </div>
       <div className="Code">
-        {code && "Link copied!"}
+        {generated && "Link copied!"}
+        </div>
+      <div className="Key">
+        {key && "Symmetric key: " + key} 
       </div>
     </div>
   );

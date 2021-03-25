@@ -43,7 +43,7 @@
     },
     "window": {
       "title": "DANA",
-      "width": 300,
+      "width": 600,
       "height": 600,
       "resizable": true,
       "fullscreen": false
