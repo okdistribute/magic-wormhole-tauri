@@ -39,7 +39,7 @@ jobs:
           squashfs-tools
     - name: install app dependencies and build it
       run: npm install && npm run build
-    - uses: tauri-apps/tauri-action@v0
+    - uses: tauri-apps/tauri-action@v0.0.10
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
