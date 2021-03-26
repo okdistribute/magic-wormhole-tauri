@@ -39,6 +39,12 @@ To build the distributable application, first build the browserify bundle.
 npm run build
 ```
 
+And then build with tauri
+
+```
+npm run tauri build
+```
+
 I haven't tried to deploy it yet, but if you want to give it a whirl, [go to
 their docs here](https://tauri.studio/en/docs/usage/development/publishing) and
 let me know how it goes :)
