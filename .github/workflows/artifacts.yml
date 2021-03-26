@@ -1,0 +1,68 @@
+name: "publish"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish-tauri:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: install Rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: install tauri bundler
+      run: cargo install tauri-bundler --force
+    - name: install webkit2gtk (ubuntu only)
+      if: matrix.platform == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y webkit2gtk-4.0
+        sudo apt install -y libwebkit2gtk-4.0-dev \
+          build-essential \
+          curl \
+          wget \
+          libssl-dev \
+          appmenu-gtk3-module \
+          libgtk-3-dev \
+          squashfs-tools
+    - name: install app dependencies and build it
+      run: npm install && npm run build
+    - uses: tauri-apps/tauri-action@v0.0.10
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+        releaseName: "App v__VERSION__"
+        body: "See the assets to download this version and install."
+        draft: true
+        prerelease: false
+    - name: Upload .dmg file (if any exists)
+      if: ${{ runner.os == 'macOS' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}.dmg
+        path: src-tauri/target/**/*.dmg
+    - name: Upload .exe file (if any exists)
+      if: ${{ runner.os == 'Windows' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}.exe
+        path: src-tauri/target/**/*.exe    # TODO: should exclude the setup .exe
+    - name: Upload .AppImage file (if any exists)
+      if: ${{ runner.os == 'Linux' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}.AppImage
+        path: src-tauri/target/**/*.AppImage
