@@ -14,16 +14,22 @@ Second, install dependencies
 npm install
 ```
 
-To watch files and build incrementally while in development mode, use the
-following commands in two separate terminals. 
+To watch files and build incrementally while in development mode, you'll need
+budo. 
 
-You will notice that every time you save a rust file, Tauri will automatically
-rebuild the application and restart it.
+```
+npm install budo -g
+```
+
+Then you can use the following commands in two separate terminals. 
 
 ```
 npm run watch
 npm start 
 ```
+
+You will notice that every time you save a rust file, Tauri will automatically
+rebuild the application and restart it.
 
 To build the application with better debugging, try
 
