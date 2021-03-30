@@ -21,6 +21,7 @@ async-tungstenite = { version = "0.13.1", features = [ "async-std-runtime" ] }
 futures = "0.3"
 serde = { version = "1.0", features = [ "derive" ] }
 tauri = { version = "0.11", features = [ "event" ] }
+snow = "0.7.2"
 
 [target."cfg(windows)".build-dependencies]
 winres = "0.1"
