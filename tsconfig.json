@@ -3,7 +3,12 @@
     "jsx": "react",
     "noImplicitAny": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true
+
+  },
+  "types": [
+    "node"
+  ]
 }
 

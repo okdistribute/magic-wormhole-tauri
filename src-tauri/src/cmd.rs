@@ -17,4 +17,9 @@ pub enum Cmd {
     callback: String,
     error: String,
   },
+
+  Heartbeat {
+    callback: String,
+    error: String,
+  },
 }

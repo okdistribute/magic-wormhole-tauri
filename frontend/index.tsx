@@ -2,14 +2,13 @@ import React from 'react';
 import { render } from 'react-dom';
 import App from './App';
 import { RPC } from './remote';
-import config from '../config';
 
 declare global {
-  interface Window { remote: RPC; }
+  interface Window { remote: typeof RPC; }
 }
 
 function onError (err: Error) {
-  console.error("Websocket connection error")
+  console.error("Connection error")
   console.error(err)
 }
 

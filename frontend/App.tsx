@@ -1,5 +1,4 @@
 import React, { useState }  from 'react';
-import { Code } from './remote';
 
 // Amount of time to show immediate user feedback
 let USER_FEEDBACK_TIMER = 5000;

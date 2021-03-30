@@ -87,6 +87,19 @@ fn main() {
               callback,
               error,
             ),
+
+            Heartbeat {
+              callback, error
+            } => tauri::execute_promise(
+              _webview,
+              move || {
+                Ok (Response {
+                  message:  'OK'
+                })
+              },
+              callback,
+              error,
+            ),
           }
           Ok(())
         }
