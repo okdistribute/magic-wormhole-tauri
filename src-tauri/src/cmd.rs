@@ -11,9 +11,18 @@ pub enum Cmd {
     callback: String,
     error: String,
   },
-
   RedeemCode {
     code: String,
+    callback: String,
+    error: String,
+  },
+  AddContact {
+    key: String,
+    name: String,
+    callback: String,
+    error: String,
+  },
+  ListContacts {
     callback: String,
     error: String,
   },

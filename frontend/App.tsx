@@ -13,8 +13,10 @@ const CodeView = () => {
     console.error('got error from backend', err)
   }
 
+  window.remote.listContacts().then(console.log).catch(console.error)
+
   function handleChange (event) {
-    console.log(event.target.value)
+    console.log('change', event.target.value)
     setCode(event.target.value)
   }
 
@@ -42,7 +44,7 @@ const CodeView = () => {
 
     window.remote.generateCode(filename)
       .then((message: string) => {
-        console.log('got', message)
+        console.log('got key', message)
         setKey(message)
       })
       .catch((err: Error) => {

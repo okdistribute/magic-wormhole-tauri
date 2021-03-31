@@ -17,6 +17,11 @@ struct Response {
   message: String,
 }
 
+#[derive(Serialize)]
+struct ListResponse {
+  list: Vec<String>,
+}
+
 // An error type we define
 // We could also use the `anyhow` lib here
 #[derive(Debug, Clone)]
@@ -82,6 +87,38 @@ fn main() {
 
                 Ok(Response {
                   message: crypto_key,
+                })
+              },
+              callback,
+              error,
+            ),
+            AddContact {
+              key,
+              name,
+              callback,
+              error,
+            } => tauri::execute_promise(
+              _webview,
+              move || {
+                println!("AddContact:");
+                println!("  key {}", &key);
+                println!("  name {}", &name);
+                Ok(Response {
+                  message: "OK".to_string(),
+                })
+              },
+              callback,
+              error,
+            ),
+            ListContacts { callback, error } => tauri::execute_promise(
+              _webview,
+              move || {
+                Ok(ListResponse {
+                  list: vec![
+                    "Contact 1".to_string(),
+                    "Contact 2".to_string(),
+                    "Contact 3".to_string(),
+                  ],
                 })
               },
               callback,

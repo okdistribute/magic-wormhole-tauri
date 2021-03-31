@@ -8,7 +8,9 @@ export enum ActionTopic {
   ERROR = 'error', 
   CODE = 'code',
   GENERATE = 'generateCode',
-  REDEEM = 'redeemCode'
+  REDEEM = 'redeemCode',
+  ADD_CONTACT = 'addContact',
+  LIST_CONTACTS = 'listContacts'
 }
 
 export type Action = {
@@ -44,6 +46,28 @@ export class RPC extends EventEmitter {
         .then((params: Response) => {
           console.log("got response from backend", JSON.stringify(params))
           resolve(params.message)
+        })
+        .catch(reject)
+    })
+  }
+
+  addContact (key: string, name: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      promisified({ cmd: ActionTopic.ADD_CONTACT, key, name })
+        .then((params: Response) => {
+          console.log("got response from backend", JSON.stringify(params))
+          resolve(params.message)
+        })
+        .catch(reject)
+    })
+  }
+
+  listContacts (): Promise<any> {
+    return new Promise((resolve, reject) => {
+      promisified({ cmd: ActionTopic.LIST_CONTACTS })
+        .then((params: Response) => {
+          console.log("got response from backend", JSON.stringify(params))
+          resolve(params)
         })
         .catch(reject)
     })
