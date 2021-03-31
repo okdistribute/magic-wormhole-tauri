@@ -5,8 +5,6 @@ export type Code = string;
 
 export enum ActionTopic {
   // TODO: create these programmatically from cmd.rs
-  ERROR = 'error', 
-  CODE = 'code',
   GENERATE = 'generateCode',
   REDEEM = 'redeemCode',
   ADD_CONTACT = 'addContact',

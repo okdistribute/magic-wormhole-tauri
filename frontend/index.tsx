@@ -9,7 +9,7 @@ declare global {
 }
 
 function onError (err: Error) {
-  console.error("Websocket connection error")
+  console.error("Connection error")
   console.error(err)
 }
 

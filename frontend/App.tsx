@@ -8,15 +8,18 @@ const CodeView = () => {
   let [ code , setCode ] = useState("");
   let [ key, setKey ] = useState("");
   let [ generated , setGenerated ] = useState(false);
+  let [ errorMsg, setErrorMsg] = useState("");
 
   let onError = (err: Error) => {
     console.error('got error from backend', err)
+    setErrorMsg(err.message);
   }
 
-  window.remote.listContacts().then(console.log).catch(console.error)
+  //window.remote.listContacts().then(console.log).catch(console.error)
 
   function handleChange (event) {
     console.log('change', event.target.value)
+    setErrorMsg("");
     setCode(event.target.value)
   }
 
@@ -25,16 +28,18 @@ const CodeView = () => {
       .then((message: string) => {
         console.log('got', message)
         setKey(message)
+        setErrorMsg("");
       })
       .catch((err: Error) => {
         onError(err)
       })
   }
-
+q
   function onClickGenerate () {
     // When a new code is generated
     // no news is good news.
     setGenerated(true);
+    setErrorMsg("");
     let filename = 'fakefilename.txt'
 
     // Reset the state after a certain amount of time
@@ -46,6 +51,7 @@ const CodeView = () => {
       .then((message: string) => {
         console.log('got key', message)
         setKey(message)
+        setErrorMsg("");
       })
       .catch((err: Error) => {
         setGenerated(false);
@@ -66,6 +72,7 @@ const CodeView = () => {
            Redeem 
         </button>
       </div>
+      <div>{errorMsg}</div>
       <div className="Code">
         {generated && "Link copied!"}
         </div>
