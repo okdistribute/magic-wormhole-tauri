@@ -34,7 +34,7 @@ const CodeView = () => {
         onError(err)
       })
   }
-q
+
   function onClickGenerate () {
     // When a new code is generated
     // no news is good news.
