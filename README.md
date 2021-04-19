@@ -1,7 +1,6 @@
-## no identity
+## magic wormhole
 
-This is an experimental project for designing trusted collaborative
-applications that are resistant to phishing attacks.
+This was mostly a way for me to test out tauri. It integrates magic wormhole to do a simple pake handshake. It doesn't send any files but it could with a bit of work!
 
 ### Development
 
